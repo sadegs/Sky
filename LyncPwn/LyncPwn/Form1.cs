@@ -42,16 +42,55 @@ namespace LyncPwn
             // Create the major API objects.
             _lyncClient.ConversationManager.ConversationAdded += new EventHandler<ConversationManagerEventArgs>(ConversationManager_ConversationAdded);
 
-            //testing
-            //System.Threading.Thread.Sleep(6 * 60 * 1000);
-
-            label1.Text = "moved cursor";
+            _lyncClient.StateChanged += new EventHandler<ClientStateChangedEventArgs>(_lyncClient_StateChanged);
+            
+            _lyncClient.Self.Contact.ContactInformationChanged += new EventHandler<ContactInformationChangedEventArgs>(Contact_ContactInformationChanged);
 
             //move mouse around on startup to change link status to available
             this.Cursor = new Cursor(Cursor.Current.Handle);
             Cursor.Position = new Point(Cursor.Position.X - 50, Cursor.Position.Y - 50);
             Cursor = Cursors.Default;
             
+        }
+
+        void Contact_ContactInformationChanged(object sender, ContactInformationChangedEventArgs e)
+        {
+            string returnValue = string.Empty;
+            StringBuilder sb = new StringBuilder();
+            Boolean raiseUpdate = false;
+            if (e.ChangedContactInformation.Contains(ContactInformationType.Availability))
+            {
+                //get actual contactModel availability (Will be int value within OCOM availaiblity ranges)
+                ContactAvailability availEnum = (ContactAvailability)((Contact)sender).GetContactInformation(ContactInformationType.Availability);
+                string activityString = (string)((Contact)sender).GetContactInformation(ContactInformationType.Activity);
+                sb.Append(availEnum.ToString() + " " + activityString);
+                raiseUpdate = true;
+            }
+
+            if (raiseUpdate)
+            {
+                returnValue = "Updated availability for "
+                + ((Contact)sender).GetContactInformation(ContactInformationType.DisplayName).ToString()
+                + System.Environment.NewLine
+                + sb.ToString();
+            }
+            
+            Dictionary<PublishableContactInformationType, object> publishState = new Dictionary<PublishableContactInformationType, object>();
+            publishState.Add(PublishableContactInformationType.Availability, ContactAvailability.Free);
+
+            _lyncClient.Self.BeginPublishContactInformation(publishState, publishState_callback, null);    
+
+
+        }
+
+        void _lyncClient_StateChanged(object sender, ClientStateChangedEventArgs e)
+        {
+            
+        }
+
+        void publishState_callback(IAsyncResult asresult)
+        {
+            lblSatus.Text = "Updated Status " + DateTime.Now.ToString();
         }
 
         void ConversationManager_ConversationAdded(object sender, ConversationManagerEventArgs e)
@@ -76,6 +115,9 @@ namespace LyncPwn
 
         void _convServ_MessageRecived(string message, string participantName, InstantMessageModality instantMessageModality)
         {
+            if (!cbxSendResponse.Checked)
+                return;
+
             secondFire = !secondFire;
             if (secondFire)
                 return;
@@ -83,11 +125,11 @@ namespace LyncPwn
             switch (messageIndex)
             {
                 case 0:
-                    instantMessageModality.BeginSendMessage("hi", StartConversationCallback, null);
+                    instantMessageModality.BeginSendMessage(txtResponse1.Text, StartConversationCallback, null);
                     messageIndex++;
                     break;
                 case 1: 
-                    instantMessageModality.BeginSendMessage("one second...brb...", StartConversationCallback, null);
+                    instantMessageModality.BeginSendMessage(txtResponse2.Text, StartConversationCallback, null);
                     messageIndex++;
                     break;
                 default:
@@ -99,7 +141,7 @@ namespace LyncPwn
 
         void Form1_InstantMessageReceived(object sender, MessageSentEventArgs e)
         {
-            MessageBox.Show(e.Text);
+            
             ((InstantMessageModality)sender).BeginSendMessage(e.Text + " - i hear ya", StartConversationCallback, null);
 
         }
@@ -108,7 +150,7 @@ namespace LyncPwn
         // This callback method appears as a parameter in the StartConversaton method.
         private void StartConversationCallback(IAsyncResult asyncop)
         {
-            MessageBox.Show("message sent");
+            
             
         }
         #endregion
