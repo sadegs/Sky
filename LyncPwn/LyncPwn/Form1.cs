@@ -242,14 +242,18 @@ namespace LyncPwn
             if (secondFire)
                 return;
 
+            _instMsgMod = instantMessageModality;
+
             switch (messageIndex)
             {
                 case 0:
-                    instantMessageModality.BeginSendMessage(txtResponse1.Text, StartConversationCallback, null);
+                    Thread tMsg1 = new Thread(sndMsg1);
+                    tMsg1.Start();
                     messageIndex++;
                     break;
-                case 1: 
-                    instantMessageModality.BeginSendMessage(txtResponse2.Text, StartConversationCallback, null);
+                case 1:
+                    Thread tMsg2 = new Thread(sndMsg2);
+                    tMsg2.Start();
                     messageIndex++;
                     break;
                 default:
@@ -257,6 +261,21 @@ namespace LyncPwn
                     _convServ.MessageRecived -= _convServ_MessageRecived;
                     break;
             }
+        }
+
+        InstantMessageModality _instMsgMod;
+        private void sndMsg1()
+        {
+            Thread.Sleep(10 * 1000);
+            if( _instMsgMod != null)
+                _instMsgMod.BeginSendMessage(txtResponse1.Text, StartConversationCallback, null);
+        }
+
+        private void sndMsg2()
+        {
+            Thread.Sleep(15 * 1000);
+            if(_instMsgMod!=null)
+                _instMsgMod.BeginSendMessage(txtResponse2.Text, StartConversationCallback, null);
         }
 
         void Form1_InstantMessageReceived(object sender, MessageSentEventArgs e)
