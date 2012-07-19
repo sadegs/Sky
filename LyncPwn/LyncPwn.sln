@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LyncPwn", "LyncPwn\LyncPwn.csproj", "{F8C05466-0E88-4186-A441-B22B64536AF1}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "installer", "installer\installer.vdproj", "{9541799B-8E57-4409-9B8F-2EC539362E19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,6 +15,8 @@ Global
 		{F8C05466-0E88-4186-A441-B22B64536AF1}.Debug|x86.Build.0 = Debug|x86
 		{F8C05466-0E88-4186-A441-B22B64536AF1}.Release|x86.ActiveCfg = Release|x86
 		{F8C05466-0E88-4186-A441-B22B64536AF1}.Release|x86.Build.0 = Release|x86
+		{9541799B-8E57-4409-9B8F-2EC539362E19}.Debug|x86.ActiveCfg = Debug
+		{9541799B-8E57-4409-9B8F-2EC539362E19}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

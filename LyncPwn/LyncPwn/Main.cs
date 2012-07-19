@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
+
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
@@ -15,7 +15,7 @@ using Microsoft.Lync.Model.Extensibility;
 
 namespace LyncPwn
 {
-    public partial class Form1 : Form
+    public partial class Main : Form
     {
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
@@ -57,7 +57,7 @@ namespace LyncPwn
         int messageIndex = 0;
         bool secondFire = true;
 
-        public Form1()
+        public Main()
         {
             InitializeComponent();
             DoMouseClick();
@@ -103,8 +103,9 @@ namespace LyncPwn
                     }
                     else
                     {
-                        //just sleep for a minute
-                        Thread.Sleep(1000 * 60);
+                        //just sleep for 10seconds
+                        Thread.Sleep(1000 * 10);
+                        
                     }
                 }
                 else  //else, just do it for all hours!
